@@ -7,10 +7,16 @@ describe("sol-shop", () => {
   anchor.setProvider(anchor.AnchorProvider.env());
 
   const program = anchor.workspace.solShop as Program<SolShop>;
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
 
   it("Is initialized!", async () => {
     // Add your test here.
-    const tx = await program.methods.initialize().rpc();
-    console.log("Your transaction signature", tx);
+    const tx_sig = await program.methods.initialize().rpc();
+    const tx = await provider.connection.getTransaction(tx_sig, {
+      commitment: "confirmed",
+      maxSupportedTransactionVersion: 0,
+    });
+    console.log(tx.meta.logMessages);
   });
 });
